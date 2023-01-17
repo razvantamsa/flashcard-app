@@ -5,12 +5,14 @@ import {
   CreateDateColumn,
   Entity,
   OneToMany,
+  OneToOne,
   PrimaryGeneratedColumn,
   UpdateDateColumn,
 } from "typeorm";
 import * as bcrypt from "bcrypt";
 
 import { DeckModel } from "../../decks/models/deck.model";
+import { UserSettingsModel } from "./settings.model";
 
 @ObjectType()
 @Entity({ name: "users" })
@@ -69,10 +71,11 @@ export class UserModel {
 
   // Associations
 
-  @OneToMany(() => DeckModel, (deck) => deck.user, {
-    cascade: true,
-  })
+  @OneToMany(() => DeckModel, (deck) => deck.user)
   decks: DeckModel[];
+  
+  @OneToOne(() => UserSettingsModel, (settings) => settings.user)
+  settings: UserSettingsModel;
 
   @BeforeInsert()
   async setPassword(password: string): Promise<void> {
