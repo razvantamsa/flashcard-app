@@ -1,6 +1,6 @@
 import { Injectable } from "@nestjs/common";
 import { InjectRepository } from "@nestjs/typeorm";
-import { getManager, Repository } from "typeorm";
+import {  Repository } from "typeorm";
 import { isEmpty, isNil, not } from "ramda";
 import { InjectPinoLogger, PinoLogger } from "nestjs-pino";
 
@@ -31,29 +31,29 @@ export class CardsService {
     return await this.cardRepository.count({ where: { deckId } });
   }
 
-  async getAccuracy(deckId: string): Promise<number> {
-    const percentage = 100;
-    const outOf = 5;
-
+  async getDeckAccuracy(deckId: string): Promise<number> {
     const result = await this.cardRepository
       .createQueryBuilder("cards")
-      .select("sum(cards.accuracy) as score")
+      .select("case when sum(cards.times_practiced) > 0 then (sum(cards.score)/sum(cards.times_practiced))/count(cards.id) else 0 end as accuracy")
       .where("cards.deckId = :deckId", { deckId })
       .getRawOne();
-
-    if (result) {
-      return ((result?.score / result?.total) * percentage) / outOf;
-    }
-
-    return 0;
+    
+    return result.accuracy;
   }
 
   async createCard(createData: CreateCardInput): Promise<CardModel> {
     return await this.cardRepository.save(createData);
   }
 
-  async editCard(editData: EditCardInput): Promise<CardModel> {
-    return await this.cardRepository.save(editData);
+  async editCard(editData: EditCardInput, cardId: string): Promise<CardModel> {
+    const card = await this.getById(cardId);
+    if (card == null) {
+      return null;
+    }
+    
+    const result = await this.cardRepository.update(cardId, { ...editData });
+
+    return result ? await this.getById(cardId) : null;
   }
 
   async deleteCardsByDeckId(deckId: string): Promise<boolean> {

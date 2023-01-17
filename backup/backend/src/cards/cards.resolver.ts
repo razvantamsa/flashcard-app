@@ -1,5 +1,5 @@
 import { UseGuards } from "@nestjs/common";
-import { Args, Mutation, Query, Resolver } from "@nestjs/graphql";
+import { Args, Mutation, Parent, Query, ResolveField, Resolver } from "@nestjs/graphql";
 import { InjectPinoLogger, PinoLogger } from "nestjs-pino";
 import { isEmpty, isNil, not } from "ramda";
 
@@ -20,7 +20,7 @@ export class CardsResolver {
     @InjectPinoLogger(CardsResolver.name)
     private readonly logger: PinoLogger,
     private readonly cardsService: CardsService
-  ) {}
+  ) { }
 
   @UseGuards(GqlAuthGuard)
   @Query((returns) => [CardModel], { name: "listByDeckId", nullable: true })
@@ -29,7 +29,7 @@ export class CardsResolver {
   }
 
   @UseGuards(GqlAuthGuard)
-  @Query((returns) => CardModel, { name: "getById", nullable: true })
+  @Query((returns) => CardModel, { name: "getCardById", nullable: true })
   async getById(@Args("id") id: string): Promise<CardModel> {
     return await this.cardsService.getById(id);
   }
@@ -45,9 +45,10 @@ export class CardsResolver {
   @UseGuards(GqlAuthGuard)
   @Mutation((returns) => CardModel, { name: "editCard", nullable: true })
   async editCard(
-    @Args("editCardInput") editCardInput: EditCardInput
+    @Args("editCardInput") editCardInput: EditCardInput,
+    @Args("cardId") cardId: string
   ): Promise<CardModel> {
-    return await this.cardsService.editCard(editCardInput);
+    return await this.cardsService.editCard(editCardInput, cardId);
   }
 
   @UseGuards(GqlAuthGuard)
@@ -80,5 +81,13 @@ export class CardsResolver {
         ? MutationStatus.SUCCESS
         : MutationStatus.FAILED,
     };
+  }
+
+  @ResolveField((returns) => Number, { name: "accuracy", nullable: true })
+  async getAccuracy(@Parent() card: CardModel): Promise<number> {
+    if (card.timesPracticed === 0) {
+      return 0;
+    }
+    return (card.score / card.timesPracticed) * 100;
   }
 }
