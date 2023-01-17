@@ -7,23 +7,25 @@ input ActivateUserInput {
 }
 
 type CardModel {
-  audio: String
+  accuracy: Int
+  back: String
   createdAt: Timestamp!
   deck: DeckModel!
+  deckId: String!
+  dueDate: Timestamp
+  front: String
   id: String!
-  lastSeen: Timestamp
-  photo: String
-  rating: Int
+  lastPracticedAt: Timestamp
+  level: Int
+  score: Int
+  timesPracticed: Int
   updatedAt: Timestamp!
-  word: JSON
 }
 
 input CreateCardInput {
-  audio: String
-  lastSeen: Timestamp
-  photo: String
-  rating: Int
-  word: JSON
+  back: String
+  deckId: String
+  front: String
 }
 
 input CreateDeckInput {
@@ -33,19 +35,23 @@ input CreateDeckInput {
 
 type DeckModel {
   createdAt: Timestamp!
-  decks(id: String!): Int
+  deckAccuracy: Int
+  deckCount: Int
   id: String!
   language: Languages
   name: String
   updatedAt: Timestamp!
+  userId: String!
 }
 
 input EditCardInput {
-  audio: String
-  lastSeen: Timestamp
-  photo: String
-  rating: Int
-  word: JSON
+  back: String
+  dueDate: Timestamp
+  front: String
+  lastPracticedAt: Timestamp
+  level: Int
+  score: Int
+  timesPracticed: Int
 }
 
 input EditDeckInput {
@@ -57,11 +63,6 @@ type GenericResponseType {
   reason: String
   status: MutationStatus!
 }
-
-"""
-The `JSON` scalar type represents JSON values as specified by [ECMA-404](http://www.ecma-international.org/publications/files/ECMA-ST/ECMA-404.pdf).
-"""
-scalar JSON
 
 enum Languages {
   aa
@@ -255,20 +256,22 @@ input LoginInput {
 
 type Mutation {
   activateUser(input: ActivateUserInput!): Tokens
+  createBare(email: String!): GenericResponseType
   createCard(createCardInput: CreateCardInput!): CardModel
   createDeck(createDeckInput: CreateDeckInput!): DeckModel
   deleteCard(id: String!): GenericResponseType
   deleteCardsByDeckId(deckId: String!): GenericResponseType
   deleteDeck(id: String!): GenericResponseType
   deleteDecksByUserId: GenericResponseType
-  editCard(editCardInput: EditCardInput!): CardModel
-  editDeck(editDeckInput: EditDeckInput!): DeckModel
+  editCard(cardId: String!, editCardInput: EditCardInput!): CardModel
+  editDeck(deckId: String!, editDeckInput: EditDeckInput!): DeckModel
   login(input: LoginInput!): Tokens
   refreshToken: Tokens
   requestResetPassword(input: RequestPasswordInput!): GenericResponseType!
   resetPassword(input: ResetPasswordInput!): GenericResponseType
   updateMe(input: UpdateUserInput!): UserModel
   updatePassword(input: UpdatePasswordInput!): Tokens!
+  updateUserSettings(input: UpdateSettingsInput!): UserSettingsModel
 }
 
 enum MutationStatus {
@@ -277,7 +280,9 @@ enum MutationStatus {
 }
 
 type Query {
-  getById(id: String!): CardModel
+  getCardById(id: String!): CardModel
+  getDeckById(id: String!): DeckModel
+  getUserSettings: UserSettingsModel!
   listByDeckId(deckId: String!): [CardModel!]
   listByUserId: [DeckModel!]
   me: UserModel!
@@ -307,6 +312,11 @@ input UpdatePasswordInput {
   newPassword: String!
 }
 
+input UpdateSettingsInput {
+  darkTheme: Boolean
+  language: Languages
+}
+
 input UpdateUserInput {
   email: String
   firstName: String
@@ -327,4 +337,11 @@ type UserModel {
   profilePic: String
   refreshToken: String
   updatedAt: Timestamp!
+}
+
+type UserSettingsModel {
+  darkTheme: Boolean
+  id: String!
+  language: Languages
+  user: UserModel!
 }
