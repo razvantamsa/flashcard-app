@@ -17,6 +17,7 @@ import { Tokens } from "./input/tokens.input";
 import { ResetPasswordToken } from "./input/resetPassword.input";
 
 import { UserModel } from "./models/user.model";
+import { UserSettingsModel } from "./models/settings.model";
 
 @Injectable()
 export class UsersService {
@@ -25,6 +26,8 @@ export class UsersService {
     private readonly logger: PinoLogger,
     @InjectRepository(UserModel)
     private readonly userRepository: Repository<UserModel>,
+    @InjectRepository(UserSettingsModel)
+    private readonly userSettingsRepository: Repository<UserSettingsModel>,
     private readonly mailerService: MailerService,
     private readonly configService: ConfigService
   ) {}
@@ -230,12 +233,18 @@ export class UsersService {
 
     const savedUser = await this.userRepository.save(user);
 
+    if (isNil(existingUser)) {
+      const newUserSettings = new UserSettingsModel();
+      newUserSettings.userID = savedUser.id;
+      await this.userSettingsRepository.save(newUserSettings);
+    }
+
     const { resetToken } = await this.resetToken(user);
 
     const encodedToken = Buffer.from(String(resetToken), "binary").toString(
       "base64"
     );
-
+    
     try {
       await this.mailerService.sendMail({
         to: user.email,

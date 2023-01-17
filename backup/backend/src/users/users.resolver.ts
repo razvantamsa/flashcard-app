@@ -106,6 +106,12 @@ export class UsersResolver {
     };
   }
 
+  @Mutation((returns) => GenericResponseType, { name: "createBare", nullable: true })
+  async createBare(@Args("email") email: string): Promise<GenericResponseType> {
+    const user = await this.usersService.createBare(email);
+    return { status: MutationStatus.SUCCESS, reason: "User created" };
+  }
+
   @Mutation((returns) => Tokens, { name: "login", nullable: true })
   async login(
     @Context() ctx: GraphQLExecutionContext,
