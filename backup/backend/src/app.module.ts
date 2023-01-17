@@ -11,7 +11,7 @@ import { TerminusModule } from "@nestjs/terminus";
 import { ScheduleModule } from "@nestjs/schedule";
 import { ApolloDriver } from "@nestjs/apollo";
 
-import { allowedLanguages, allowedMutationStatus } from "./constants";
+import { allowedLanguages, allowedLevelRating, allowedMutationStatus, allowedScoreRating } from "./constants";
 
 import { UsersResolver } from "./users/users.resolver";
 import { DecksResolver } from "./decks/decks.resolver";
@@ -62,6 +62,8 @@ import { CardsModule } from "./cards/cards.module";
       directiveResolvers: {
         MutationStatus: allowedMutationStatus,
         Languages: allowedLanguages,
+        LevelRating: allowedLevelRating,
+        ScoreRating: allowedScoreRating,
       },
       context: async ({ req, connection, res }) => {
         // subscriptions

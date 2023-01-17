@@ -11,6 +11,30 @@ registerEnumType(MutationStatus, {
 
 export const allowedMutationStatus = Object(MutationStatus);
 
+export enum LevelRating {
+  EASY = 1,
+  MEDIUM = 0,
+  HARD = -1
+}
+
+registerEnumType(LevelRating, {
+  name: "LevelRating",
+});
+
+export const allowedLevelRating = Object(LevelRating);
+
+export enum ScoreRating {
+  EASY = 1,
+  MEDIUM = 0.5,
+  HARD = 0
+}
+
+registerEnumType(ScoreRating, {
+  name: "ScoreRating",
+});
+
+export const allowedScoreRating = Object(ScoreRating);
+
 export enum Languages {
   ab = "Abkhaz",
   aa = "Afar",
@@ -206,3 +230,25 @@ export class LanguageProg {
   language: Languages;
   accuarcy: number;
 }
+
+export enum ContactUsCategories {
+  GENERAL_QUESTION,
+  MY_ACCOUNT,
+  TOPICS_AND_LESSONS,
+  EVENTS,
+  FEEDBACK,
+  TECHNICAL_SUPPORT
+}
+
+registerEnumType(ContactUsCategories, {
+  name: "ContactUsCategories"
+});
+
+export const allowedContactUsCategories: Record<keyof typeof ContactUsCategories, any> = {
+  GENERAL_QUESTION: "General question",
+  MY_ACCOUNT: "My account/payments",
+  TOPICS_AND_LESSONS: "Topics & Lessons",
+  EVENTS: "Events",
+  FEEDBACK: "Feedback",
+  TECHNICAL_SUPPORT: "Technical Support (website problem)"
+};
