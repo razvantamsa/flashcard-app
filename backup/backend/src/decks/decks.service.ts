@@ -45,12 +45,20 @@ export class DecksService {
       .getRawMany();
   }
 
-  async createDeck(createData: CreateDeckInput): Promise<DeckModel> {
-    return await this.deckRepository.save(createData);
+  async createDeck(createData: CreateDeckInput, userId: string): Promise<DeckModel> {
+    return await this.deckRepository.save({ ...createData ,userId: userId});
   }
 
-  async editDeck(editData: EditDeckInput): Promise<DeckModel> {
-    return await this.deckRepository.save(editData);
+  async editDeck(editData: EditDeckInput, deckId: string): Promise<DeckModel> {
+    const deck = await this.getById(deckId);
+    
+    if (deck == null) {
+      return null;
+    }
+
+    const result = await this.deckRepository.update(deckId, { ...editData, });
+    
+    return result ? await this.getById(deckId) : null;
   }
 
   async deleteDecksByUserId(userId: string): Promise<boolean> {

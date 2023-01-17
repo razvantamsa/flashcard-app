@@ -22,6 +22,7 @@ export class DeckModel {
   @PrimaryGeneratedColumn("uuid")
   id: string;
 
+  @Field({ nullable: false })
   @Column({ nullable: true, name: "user_id" })
   userId: string;
 
@@ -51,12 +52,10 @@ export class DeckModel {
   language?: Languages;
 
   // Associations
-  @ManyToOne(() => UserModel, (user) => user.decks)
+  @ManyToOne(() => UserModel, (user) => user.decks, { onDelete: "CASCADE" })
   @JoinColumn({ name: "user_id" })
   user: UserModel;
 
-  @OneToMany(() => CardModel, (card) => card.deck, {
-    cascade: true,
-  })
+  @OneToMany(() => CardModel, (card) => card.deck)
   cards: CardModel[];
 }

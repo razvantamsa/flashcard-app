@@ -2,6 +2,7 @@ import { Module } from "@nestjs/common";
 import { TypeOrmModule } from "@nestjs/typeorm";
 import { ConfigService, ConfigModule } from "@nestjs/config";
 
+import { BasicStrategy } from "../users/basic.strategy";
 import { DeckModel } from "./models/deck.model";
 import { CardModel } from "../cards/models/card.model";
 
@@ -15,9 +16,9 @@ import { DecksResolver } from "./decks.resolver";
   imports: [
     TypeOrmModule.forFeature([DeckModel, CardModel]),
     CommonModule,
-    ConfigModule,
+    ConfigModule
   ],
-  providers: [DecksResolver, ConfigService, DecksService, CardsService],
+  providers: [DecksResolver, ConfigService, DecksService, CardsService, BasicStrategy],
   exports: [TypeOrmModule.forFeature([DeckModel]), DecksService],
 })
 export class DecksModule {}

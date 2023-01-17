@@ -1,16 +1,16 @@
 import { UseGuards } from "@nestjs/common";
-import { Args, Mutation, Query, ResolveField, Resolver } from "@nestjs/graphql";
+import { Args, Mutation, Parent, Query, ResolveField, Resolver } from "@nestjs/graphql";
 import { InjectPinoLogger, PinoLogger } from "nestjs-pino";
 import { isEmpty, isNil, not } from "ramda";
 
 import { GqlAuthGuard } from "./../users/gqlauthguard";
+import { User as CurrentUser } from "./../users/users.decorator";
 import { MutationStatus } from "../constants";
 import { GenericResponseType } from "../common/types/generic-response.type";
 
 import { CreateDeckInput } from "./input/createDeck.input";
 import { EditDeckInput } from "./input/editDeck.input";
 
-import { User as CurrentUser } from "./../users/users.decorator";
 import { UserModel } from "./../users/models/user.model";
 import { DeckModel } from "./models/deck.model";
 
@@ -33,7 +33,7 @@ export class DecksResolver {
   }
 
   @UseGuards(GqlAuthGuard)
-  @Query((returns) => DeckModel, { name: "getById", nullable: true })
+  @Query((returns) => DeckModel, { name: "getDeckById", nullable: true })
   async getById(@Args("id") id: string): Promise<DeckModel> {
     return await this.decksService.getById(id);
   }
@@ -41,17 +41,19 @@ export class DecksResolver {
   @UseGuards(GqlAuthGuard)
   @Mutation((returns) => DeckModel, { name: "createDeck", nullable: true })
   async createDeck(
-    @Args("createDeckInput") createDeckInput: CreateDeckInput
+    @Args("createDeckInput") createDeckInput: CreateDeckInput,
+    @CurrentUser() user: UserModel
   ): Promise<DeckModel> {
-    return await this.decksService.createDeck(createDeckInput);
+    return await this.decksService.createDeck(createDeckInput, user.id);
   }
 
   @UseGuards(GqlAuthGuard)
   @Mutation((returns) => DeckModel, { name: "editDeck", nullable: true })
   async editDeck(
-    @Args("editDeckInput") editDeckInput: EditDeckInput
+    @Args("editDeckInput") editDeckInput: EditDeckInput,
+    @Args("deckId") deckId: string
   ): Promise<DeckModel> {
-    return await this.decksService.editDeck(editDeckInput);
+    return await this.decksService.editDeck(editDeckInput, deckId);
   }
 
   @UseGuards(GqlAuthGuard)
@@ -80,19 +82,19 @@ export class DecksResolver {
     const result = await this.decksService.deleteDeck(id);
 
     return {
-      status: not(isNil(result) || isEmpty(result))
+      status: result
         ? MutationStatus.SUCCESS
         : MutationStatus.FAILED,
     };
   }
 
-  @ResolveField((returns) => Number, { name: "decks", nullable: true })
-  async getCardsCount(@Args("id") id: string): Promise<number> {
-    return await this.cardsService.getCardCount(id);
+  @ResolveField((returns) => Number, { name: "deckCount", nullable: true })
+  async getCardsCount(@Parent() deck: DeckModel): Promise<number> {
+    return await this.cardsService.getCardCount(deck.id);
   }
 
-  @ResolveField((returns) => Number, { name: "decks", nullable: true })
-  async getAccuracy(@Args("id") id: string): Promise<number> {
-    return await this.cardsService.getAccuracy(id);
+  @ResolveField((returns) => Number, { name: "deckAccuracy", nullable: true })
+  async getAccuracy(@Parent() deck: DeckModel): Promise<number> {
+    return await this.cardsService.getDeckAccuracy(deck.id);
   }
 }
