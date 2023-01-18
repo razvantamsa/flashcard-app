@@ -26,6 +26,7 @@ import {
   ResetPasswordInput,
   UpdatePasswordInput,
 } from "./input/resetPassword.input";
+import { CreateUserInput } from "./input/create.input";
 
 import { User as CurrentUser } from "./users.decorator";
 import { UserModel } from "./models/user.model";
@@ -107,8 +108,8 @@ export class UsersResolver {
   }
 
   @Mutation((returns) => GenericResponseType, { name: "createBare", nullable: true })
-  async createBare(@Args("email") email: string): Promise<GenericResponseType> {
-    const user = await this.usersService.createBare(email);
+  async createBare(@Args("createUserInput") createUserInput: CreateUserInput): Promise<GenericResponseType> {
+    const user = await this.usersService.createBare(createUserInput.email, createUserInput.firstName, createUserInput.lastName);
     return { status: MutationStatus.SUCCESS, reason: "User created" };
   }
 
