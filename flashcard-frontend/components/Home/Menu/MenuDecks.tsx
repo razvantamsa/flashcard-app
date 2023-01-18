@@ -1,6 +1,6 @@
 import React from 'react'
 import { StyleSheet, Text, View, TouchableWithoutFeedback } from 'react-native'
-import { normalTheme } from '../../theme';
+import { DECKS_DISPLAYED, normalTheme } from '../../theme';
 
 function getDeckPracticeStatus(deck: any) {
     if(deck.cardsDue <= 5 || deck.cardsDue <= 25/100 * deck.numberOfCards) {
@@ -15,38 +15,29 @@ function getDeckPracticeStatus(deck: any) {
 export default function MenuDecks({ decks, navigation }: any) {
   return (
     <View style={styles.menuDecks}>
-        {decks.length ? 
-        <>
-                <View style={[styles.tableColumn, {flex: 3}]}>
+        { decks.length ? 
+            <>
                 {decks.map((deck: any) =>
-                    <TouchableWithoutFeedback key={deck.id} onPress={() => navigation.push('Deck', { deck })}>
-                        <View key={deck.id} style={styles.tableRow}>
-                            <Text>{deck.name}</Text>  
+                    <TouchableWithoutFeedback onPress={() => navigation.push('Deck', { deck })}>
+                        <View style={styles.deckRow} key={deck.id}>
+                            <>
+                                <View style={[styles.deckRowColumn, { flex: 3 }]}>
+                                    <Text>{deck.name}</Text>  
+                                </View>
+                                <View style={styles.deckRowColumn}>
+                                    <Text>{deck.numberOfCards}</Text>  
+                                </View>
+                                <View style={styles.deckRowColumn}>
+                                    <Text style={[{color: getDeckPracticeStatus(deck)}]}>{deck.cardsDue}</Text>  
+                                </View>
+                            </> 
                         </View>
                     </TouchableWithoutFeedback>
                 )}
-            </View>
-            <View style={styles.tableColumn}>
-                {decks.map((deck: any) => 
-                    <TouchableWithoutFeedback key={deck.id} onPress={() => navigation.push('Deck', { deck })}>
-                        <View key={deck.id} style={styles.tableRow}>
-                            <Text>{deck.numberOfCards}</Text>  
-                        </View> 
-                    </TouchableWithoutFeedback>
-                )}
-            </View>
-            <View style={styles.tableColumn}>
-                {decks.map((deck: any) => 
-                    <TouchableWithoutFeedback key={deck.id} onPress={() => navigation.push('Deck', { deck })}>
-                        <View key={deck.id} style={styles.tableRow}>
-                            <Text style={[{color: getDeckPracticeStatus(deck)}]}>{deck.cardsDue}</Text>  
-                        </View> 
-                    </TouchableWithoutFeedback>
-                )}
-            </View>
-
-        </>
-        : <Text style={{fontWeight: '700', fontSize: 18, textAlign: 'center'}}>No decks</Text>}
+                <View style={{flex: DECKS_DISPLAYED - decks.length}}></View>
+            </>
+            : <Text style={{fontWeight: '700', fontSize: 18, textAlign: 'center'}}>No decks</Text>
+        }
     </View>
   )
 }
@@ -54,18 +45,22 @@ export default function MenuDecks({ decks, navigation }: any) {
 const styles = StyleSheet.create({
     menuDecks: {
         flex: 3,
+        paddingVertical: 20,
         width: '100%',
+        justifyContent: 'center',
+        alignItems: 'center',
+    },
+    deckRow: {
+        flex: 1,
         flexDirection: 'row',
         justifyContent: 'center',
         alignItems: 'center',
     },
-    tableColumn: {
+    deckRowColumn: {
         flex: 1,
-        height: '100%',
-    },
-    tableRow: {
+        padding: 10,
         paddingVertical: 15,
         borderBottomColor: '#000',
         borderBottomWidth: 1,
-    },
+    }
 });

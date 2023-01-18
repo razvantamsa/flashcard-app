@@ -1,5 +1,19 @@
 import db from "./mockDatabase";
 
+export const userRequests = {
+    async getUser() {
+        // TODO: connect to backend
+        console.log('GET current user data');
+        return db.user;
+    },
+    
+    async getUserDecks(id: string) {
+        // TODO: connect to backend
+        console.log('GET current user decks');
+        return db.userDecks;
+    }
+}
+
 export const deckRequests = {
     getAll() {
         // TODO: connect to backend
