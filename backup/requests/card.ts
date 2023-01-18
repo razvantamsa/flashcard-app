@@ -1,90 +1,83 @@
-const axios = require("axios");
-
-const endpoint = "localhost:3000/graphql";
-const headers = {
-	"content-type": "application/json",
-    "Authorization": "<token>" // pentru requesturile care se fac dupa login
-};
-const graphqlQuery = {
-    "operationName": "fetchAuthor",
-    "query": `query fetchAuthor { author { id name } }`,
-    "variables": {}
-};
-
-const response = axios({
-  url: endpoint,
-  method: 'post',
-  headers: headers,
-  data: graphqlQuery
-});
-
-console.log(response.data); // data
-console.log(response.errors); // errors if any
-
-const examples =
+const cardRequests =
   [
     {
-    "operationName": "getById",
-    "query": `query getById($id: String!) {
-                      getById(id: $id) {  
-                        card {
-                          id
-                          deckId
-                          createdAt
-                          updatedAt
-                          front
-                          back
-                          score
-                          timesPracticed
-                          level
-                          lastPracticedAt
-                          dueDate
-                          accuracy
-                        }
-                      }
-                    }`,
+      "operationName": "createCard",
+      "query": `mutation createCard($createCardInput: CreateCardInput!) {
+                  createCard(createCardInput: $createCardInput) { 
+                    front
+                    back
+                    score
+                    timesPracticed
+                    level
+                    lastPracticedAt
+                    dueDate
+                  }
+                }`,
+    "variables": { front: "", back: "", deckId: "" }
+    },
+    {
+      "operationName": "editCard",
+      "query": `mutation editCard($editCardInput: EditCardInput!, $cardId: String!) {
+                  editCard(editCardInput: $editCardInput, cardId: $cardId) { 
+                    front
+                    back
+                    score
+                    timesPracticed
+                    level
+                    lastPracticedAt
+                    dueDate
+                  }
+                }`,
+      "variables": { editCardInput: { front: "", back: "", score: 0, timesPracticed: 0, level: 0 }, cardId:""} // besides cardId, all other fields are optional
+    },
+    {
+      "operationName": "deleteCard",
+      "query": `mutation deleteCard($id: String!) {
+                  deleteCard(id: $id) { 
+                    status
+                    reason 
+                  }
+                }`,
+      "variables": { id:""} 
+    },
+    {
+    "operationName": "getByCardId",
+    "query": `query getByCardId($id: String!) {
+                getById(id: $id) {  
+                  id
+                  deckId
+                  createdAt
+                  updatedAt
+                  front
+                  back
+                  score
+                  timesPracticed
+                  level
+                  lastPracticedAt
+                  dueDate
+                  accuracy
+                }
+              }`,
     "variables": {id:""}
     },
     {
       "operationName": "listByDeckId",
       "query": `query listByDeckId($deckId: String!) {
-                      listByDeckId(deckId: $deckId) {
-                        cards {
-                          id
-                          deckId
-                          createdAt
-                          updatedAt
-                          front
-                          back
-                          score
-                          timesPracticed
-                          level
-                          lastPracticedAt
-                          dueDate
-                          accuracy
-                        }
-                      }
-                    }`,
+                  listByDeckId(deckId: $deckId) {
+                    id
+                    deckId
+                    createdAt
+                    updatedAt
+                    front
+                    back
+                    score
+                    timesPracticed
+                    level
+                    lastPracticedAt
+                    dueDate
+                    accuracy
+                  }
+                }`,
       "variables": { deckId: "" }
-    },
-    {
-      "operationName": "create",
-      "query": `mutation create($input: CreateCardInput!) {
-                      create(input: $input) {
-                        card {
-                          id
-                          deckId
-                          front
-                          back
-                        }
-                      }
-                    }`,
-      "variables": {
-        "input": {
-          "deckId": "",
-          "front": "",
-          "back": ""
-        }
-      }
-    },
+    }
   ]

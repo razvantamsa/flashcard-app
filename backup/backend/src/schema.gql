@@ -33,6 +33,12 @@ input CreateDeckInput {
   name: String
 }
 
+input CreateUserInput {
+  email: String
+  firstName: String
+  lastName: String
+}
+
 type DeckModel {
   createdAt: Timestamp!
   deckAccuracy: Int
@@ -256,7 +262,7 @@ input LoginInput {
 
 type Mutation {
   activateUser(input: ActivateUserInput!): Tokens
-  createBare(email: String!): GenericResponseType
+  createBare(createUserInput: CreateUserInput!): GenericResponseType
   createCard(createCardInput: CreateCardInput!): CardModel
   createDeck(createDeckInput: CreateDeckInput!): DeckModel
   deleteCard(id: String!): GenericResponseType
