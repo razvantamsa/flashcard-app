@@ -24,10 +24,10 @@ export default function PopularDecks({ user }: any) {
         <View style={styles.popularDecksHeader}>
             <Text style={{ fontWeight: '600' }}>Most Popular Decks</Text>
         </View>
-        <ScrollView persistentScrollbar={true} horizontal={true} style={{ width: '100%', paddingBottom: 10}}>
+        <ScrollView persistentScrollbar={true} horizontal={true} style={{ width: '100%'}}>
             {decks.map((deck) => 
                 <View style={styles.popularDeckItem} key={deck}>
-                    <Text style={{ color: 'white', fontWeight: '600' }} >{deck}</Text>
+                    <Text style={{ color: 'white', fontWeight: '600', fontSize: 10 }} >{deck}</Text>
                 </View>
             )}
         </ScrollView>
@@ -40,7 +40,7 @@ const styles = StyleSheet.create({
         justifyContent: 'center',
         alignItems: 'center',
         flex: 1, 
-        paddingBottom: 10,
+        // paddingBottom: 10,
         // backgroundColor: normalTheme.modalBackground,
         borderRadius: 10,
     },
@@ -53,8 +53,9 @@ const styles = StyleSheet.create({
     },
     popularDeckItem: {
         backgroundColor: normalTheme.lightBlue, 
-        padding: 2, 
-        paddingHorizontal: 5, 
+        // padding: 2, 
+        height: 30,
+        paddingHorizontal: 10, 
         marginHorizontal: 10, 
         justifyContent: 'center', 
         alignItems: 'center', 
