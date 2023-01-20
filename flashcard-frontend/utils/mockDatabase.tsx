@@ -1,3 +1,5 @@
+import Deck from "../models/Deck";
+
 const db = {
     userDecks:  ['CrpytoBani', 'Build-uri Lol', 'Sociologie', 'WoW', 'Versuri Ian', 'Okok', 'Testing'],
     user: {
@@ -14,5 +16,15 @@ const db = {
     decks: [],
     cards: [],
 }
+
+export const decks = [
+    new Deck({ userId: '1', name: 'Trading' }),
+    new Deck({ userId: '1', name: 'Game of Thrones Trivia' }),
+    new Deck({ userId: '1', name: 'Pickup Lines' }),
+    new Deck({ userId: '1', name: 'Spanish' }),
+    new Deck({ userId: '1', name: 'Docker Commands' }),
+    new Deck({ userId: '1', name: 'NGINX' }),
+    new Deck({ userId: '1', name: 'MSA Exam' }),
+]
 
 export default db;

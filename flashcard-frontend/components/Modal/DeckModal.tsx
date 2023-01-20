@@ -1,17 +1,20 @@
-import React, { useState } from 'react';
+import React, { useContext, useState } from 'react';
 import { Modal, View, StyleSheet, Text, TouchableWithoutFeedback, TextInput } from 'react-native';
+import { AppContext, updateAppContextDecks } from '../../context/app.context';
 import Deck from '../../models/Deck';
 import { normalTheme } from '../theme';
 import AddDeckModalForm from './forms/AddDeckModalForm';
 import CloseModalButton from './subcomponents/CloseModalButton';
 import SubmitModalButton from './subcomponents/SubmitModalButton';
 
-export default function DeckModal({isModalVisible, setDecks, setIsModalVisible}: any) {
+export default function DeckModal({isModalVisible, setIsModalVisible}: any) {
+    const { appContext, setAppContext } = useContext(AppContext);
+
     const submitButtonColor = normalTheme.allow;
     const submitButtonText = 'Submit';
     const headerText = 'Add New Deck';
 
-    const [ deck, setDeck ] = useState(new Deck());
+    const [ deck, setDeck ] = useState(new Deck({userId: appContext.user.id}));
     
     function closeModal() {
         setIsModalVisible(false);
@@ -20,7 +23,7 @@ export default function DeckModal({isModalVisible, setDecks, setIsModalVisible}:
 
     function submitModal() {
         if(!deck.name) { return };
-        setDecks((prevValue: any) => [deck, ...prevValue]);
+        updateAppContextDecks(setAppContext, [deck, ...appContext.decks]);
         closeModal();
     }
 

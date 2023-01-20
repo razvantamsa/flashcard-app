@@ -1,19 +1,22 @@
-import React, { useState } from 'react';
+import React, { useState, useContext } from 'react';
 import { StyleSheet, View, Text } from 'react-native';
 import MenuDecks from './MenuDecks';
 import { DECKS_DISPLAYED } from '../../theme';
 import { getDecksToDisplay } from './utils';
 import MenuActions from './MenuActions';
 import MenuNavigation from './MenuNavigation';
+import { AppContext } from '../../../context/app.context';
 
-export default function Menu({ decks, navigation, setIsAddDeckModalVisible }: any) {
+export default function Menu({ navigation, setIsAddDeckModalVisible }: any) {
+    const { appContext, setAppContext } = useContext(AppContext);
+
     const [pagination, setPagination] = useState(0);
     const [searchByName, setSearchByName] = useState('');
 
     function displayOnlyOnePage() {
         const startingPointSlice = pagination;
-        const endingPointSlice = Math.min(pagination + DECKS_DISPLAYED, getDecksToDisplay(decks, searchByName).length);
-        return getDecksToDisplay(decks, searchByName).slice(startingPointSlice, endingPointSlice);
+        const endingPointSlice = Math.min(pagination + DECKS_DISPLAYED, getDecksToDisplay(appContext.decks, searchByName).length);
+        return getDecksToDisplay(appContext.decks, searchByName).slice(startingPointSlice, endingPointSlice);
     }
 
   return (
@@ -29,7 +32,7 @@ export default function Menu({ decks, navigation, setIsAddDeckModalVisible }: an
             <MenuNavigation 
                 pagination={pagination} 
                 setPagination={setPagination} 
-                decks={getDecksToDisplay(decks, searchByName)} 
+                decks={getDecksToDisplay(appContext.decks, searchByName)}
                 />
         </View>
         <MenuDecks 

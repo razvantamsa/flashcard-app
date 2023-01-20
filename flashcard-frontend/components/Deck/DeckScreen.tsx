@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useContext } from 'react';
 import { StyleSheet, Text, View, ScrollView, Button } from 'react-native'
 import Header from './subcomponents/Header';
 import { generateCards } from '../../mock-values';
@@ -24,6 +24,8 @@ export default function DeckScreen({ navigation, route }: any) {
     const [cardToDisplay, setCardToDisplay] = useState({});
 
     const [deckScreenOption, setDeckScreenOption] = useState('practice');
+
+    console.log(route.params.deck);
 
     useEffect(() => {
       setCards(generateCards(10));
